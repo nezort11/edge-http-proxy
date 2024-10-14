@@ -18,10 +18,11 @@ const handleProxyHttpRequest = async (_req: Request) => {
 
   const targetUrl = originUrlObj.pathname.slice(1) + originUrlObj.search;
   const responseProxied = await fetch(targetUrl, _req);
-  const proxiedCorsHeaders = new Headers({
-    ...Object.fromEntries(responseProxied.headers),
-    ...corsHeaders,
-  });
+  const proxiedCorsHeaders = new Headers(responseProxied.headers);
+  for (const corsHeader of Object.entries(corsHeaders)) {
+    // replace proxy cors header instead of concat
+    proxiedCorsHeaders.set(...corsHeader);
+  }
   return new Response(responseProxied.body, {
     headers: proxiedCorsHeaders,
   });
