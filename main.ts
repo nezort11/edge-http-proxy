@@ -18,10 +18,13 @@ const handleProxyHttpRequest = async (_req: Request) => {
 
   const targetUrl = originUrlObj.pathname.slice(1) + originUrlObj.search;
   const responseProxied = await fetch(targetUrl, _req);
-  for (const corsHeader of Object.entries(corsHeaders)) {
-    responseProxied.headers.set(...corsHeader);
-  }
-  return responseProxied;
+  const proxiedCorsHeaders = new Headers({
+    ...Object.fromEntries(responseProxied.headers),
+    ...corsHeaders,
+  });
+  return new Response(responseProxied.body, {
+    headers: proxiedCorsHeaders,
+  });
 };
 
 Deno.serve(handleProxyHttpRequest);
