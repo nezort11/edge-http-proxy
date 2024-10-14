@@ -7,7 +7,7 @@ const handleProxyHttpRequest = async (_req: Request) => {
     );
   }
 
-  const targetUrl = originUrlObj.pathname.slice(1);
+  const targetUrl = originUrlObj.pathname.slice(1) + originUrlObj.search;
   const responseProxied = await fetch(targetUrl, _req);
   return responseProxied;
 };
