@@ -27,4 +27,4 @@ const handleProxyHttpRequest = async (_req: Request) => {
   });
 };
 
-Deno.serve(handleProxyHttpRequest);
+Deno.serve({ hostname: "0.0.0.0", port: 4000 }, handleProxyHttpRequest);
