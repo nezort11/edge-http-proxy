@@ -1,6 +1,6 @@
 // import * as base64 from "@std/encoding/base64";
 
-const corsHeaders = {
+const corsDisableHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "*",
@@ -8,7 +8,7 @@ const corsHeaders = {
 
 const handleProxyHttpRequest = async (_req: Request) => {
   if (_req.method === "OPTIONS") {
-    return new Response("Hi!", { headers: corsHeaders });
+    return new Response("Hi!", { headers: corsDisableHeaders });
   }
   // console.log("request:", _req);
   // console.log("request.url:", _req.url);
@@ -43,9 +43,9 @@ const handleProxyHttpRequest = async (_req: Request) => {
     headers: targetHeaders,
   });
   const proxiedCorsHeaders = new Headers(responseProxied.headers);
-  for (const corsHeader of Object.entries(corsHeaders)) {
+  for (const corsDisableHeader of Object.entries(corsDisableHeaders)) {
     // replace proxy cors header instead of concat
-    proxiedCorsHeaders.set(...corsHeader);
+    proxiedCorsHeaders.set(...corsDisableHeader);
   }
   return new Response(responseProxied.body, {
     headers: proxiedCorsHeaders,
