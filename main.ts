@@ -6,6 +6,15 @@ const corsDisableHeaders = {
   "Access-Control-Allow-Headers": "*",
 };
 
+function toPlainObject(obj: object) {
+  const plainObj = { ...obj }; // Copy enumerable properties
+  // Add symbol properties
+  Object.getOwnPropertySymbols(obj).forEach((symbol) => {
+    plainObj[symbol.description!] = obj[symbol]; // Get literal of symbol
+  });
+  return plainObj;
+}
+
 const handleProxyHttpRequest = async (_req: Request) => {
   if (_req.method === "OPTIONS") {
     return new Response("Hi!", { headers: corsDisableHeaders });
@@ -39,7 +48,7 @@ const handleProxyHttpRequest = async (_req: Request) => {
   // console.log("target url:", targetUrl);
 
   const responseProxied = await fetch(targetUrl, {
-    ..._req,
+    ...toPlainObject(_req),
     headers: targetHeaders,
   });
   const proxiedCorsHeaders = new Headers(responseProxied.headers);
