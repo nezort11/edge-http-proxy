@@ -50,12 +50,17 @@ const handleProxyHttpRequest = async (_req: Request) => {
   const responseProxied = await fetch(targetUrl, {
     ...toPlainObject(_req),
     headers: targetHeaders,
+    redirect: "follow", // Explicitly follow redirects
   });
   const proxiedCorsHeaders = new Headers(responseProxied.headers);
   for (const corsDisableHeader of Object.entries(corsDisableHeaders)) {
     // replace proxy cors header instead of concat
     proxiedCorsHeaders.set(...corsDisableHeader);
   }
+
+  // Add the final URL after redirects as a custom header
+  proxiedCorsHeaders.set("X-Final-URL", responseProxied.url);
+
   return new Response(responseProxied.body, {
     headers: proxiedCorsHeaders,
   });
