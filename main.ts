@@ -45,13 +45,17 @@ const handleProxyHttpRequest = async (_req: Request) => {
   }
 
   const targetUrl = originUrlObj.pathname.slice(1) + originUrlObj.search;
-  // console.log("target url:", targetUrl);
+  // console.log("Proxying:", targetUrl);
 
   const responseProxied = await fetch(targetUrl, {
-    ...toPlainObject(_req),
+    method: _req.method,
     headers: targetHeaders,
+    body: _req.body,
     redirect: "follow", // Explicitly follow redirects
   });
+
+  // console.log("Final URL:", responseProxied.url);
+
   const proxiedCorsHeaders = new Headers(responseProxied.headers);
   for (const corsDisableHeader of Object.entries(corsDisableHeaders)) {
     // replace proxy cors header instead of concat
